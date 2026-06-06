@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: smartclass-ihe-portal
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist

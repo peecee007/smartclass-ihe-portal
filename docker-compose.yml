@@ -1,0 +1,7 @@
+services:
+  smartclass-ihe-portal:
+    build: .
+    container_name: smartclass-ihe-portal
+    ports:
+      - "8080:80"
+    restart: unless-stopped
