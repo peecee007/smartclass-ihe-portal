@@ -605,6 +605,35 @@ function saveDonations(d){ localStorage.setItem(SK_DONATIONS,JSON.stringify(d)) 
 function addDonation(d){ const all=getDonations(); all.unshift(d); saveDonations(all); return d; }
 
 // ── CLAUDE API ────────────────────────────────────────────────────────
+const CLAUDE_API_KEY = import.meta.env?.VITE_ANTHROPIC_API_KEY || "";
+const CLAUDE_HEADERS = {
+  "Content-Type":"application/json",
+  "anthropic-version":"2023-06-01",
+  "anthropic-dangerous-direct-browser-access":"true",
+  ...(CLAUDE_API_KEY ? {"x-api-key":CLAUDE_API_KEY} : {})
+};
+
+async function callClaude(payload) {
+  if (!CLAUDE_API_KEY) throw new Error("Missing VITE_ANTHROPIC_API_KEY");
+  const res = await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:CLAUDE_HEADERS,
+    body:JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    const message = await res.text().catch(()=>"");
+    throw new Error(`Claude API failed (${res.status}) ${message}`);
+  }
+  return res.json();
+}
+
+function parseClaudeJson(text, fallback) {
+  const clean = String(text||"").replace(/```(?:json)?|```/gi,"").trim();
+  const json = clean.match(/(\[[\s\S]*\]|\{[\s\S]*\})/)?.[0] || clean;
+  try{return JSON.parse(json)}
+  catch{return fallback}
+}
+
 async function fetchLessonContent(cls) {
   const objective = cls.objectiveLabel || cls.tag || "Digital Skills";
   const prompt = `You are an experienced ICT trainer for the NYSC Smart Youth & Teacher Initiative (SYTI) in Awgu LGA, Enugu State, Nigeria.
@@ -639,53 +668,56 @@ One practical question or short task to confirm understanding.
 
 Keep language simple and encouraging. Make every exercise doable on a basic Windows PC. Relate examples to Nigeria where possible.`;
 
-  const res = await fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1200,
+  try{
+    const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:1200,
       messages:[{role:"user",content:prompt}]
-    })
-  });
-  const data = await res.json();
-  return data.content?.[0]?.text || "Could not load lesson. Please try again.";
+    });
+    return data.content?.[0]?.text || "Could not load lesson. Please try again.";
+  }catch(err){
+    console.error("fetchLessonContent failed",err);
+    return "Could not load lesson. Please check the Claude API key and try again.";
+  }
 }
 
 async function generateClassSummary(title, module, description) {
-  const res = await fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1000,
+  try{
+    const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:1000,
       system:"Return ONLY valid JSON. No markdown, no backticks, no preamble.",
       messages:[{role:"user",content:`Generate class info JSON for ICT class "${title}" (${module}): "${description}". Return: {"description":"2-sentence description","duration":"X Hours","level":"Beginner|Intermediate|Advanced|All Levels","tag":"category"}`}]
-    })
-  });
-  const data = await res.json();
-  try{return JSON.parse(data.content?.[0]?.text||"{}")}catch{return{}}
+    });
+    return parseClaudeJson(data.content?.[0]?.text,{});
+  }catch(err){
+    console.error("generateClassSummary failed",err);
+    return {};
+  }
 }
 
 // ── QUIZ GENERATOR via Claude ────────────────────────────────────────
 async function fetchQuiz(cls) {
-  const res = await fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1000,
+  try{
+    const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:1000,
       system:"Return ONLY a valid JSON array. No markdown, no backticks, no preamble.",
       messages:[{role:"user",content:`Create 5 multiple-choice quiz questions for a Nigerian secondary school ICT class: "${cls.title}" (${cls.objectiveLabel||cls.tag}). Each question must test practical understanding. Return a JSON array of exactly 5 objects: [{"q":"question text","opts":["A. option","B. option","C. option","D. option"],"ans":0}] where ans is the 0-based index of the correct option. Make questions specific, clear, and relevant to Nigeria.`}]
-    })
-  });
-  const data = await res.json();
-  const text = data.content?.[0]?.text||"[]";
-  try{ return JSON.parse(text.replace(/```json|```/g,"").trim()); }
-  catch{ return []; }
+    });
+    const quiz = parseClaudeJson(data.content?.[0]?.text,[]);
+    return Array.isArray(quiz) ? quiz : [];
+  }catch(err){
+    console.error("fetchQuiz failed",err);
+    return [];
+  }
 }
 
 // ── Q&A ANSWERER via Claude ───────────────────────────────────────────
 async function fetchQAAnswer(question, cls) {
-  const res = await fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:400,
+  try{
+    const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:400,
       messages:[{role:"user",content:`A Nigerian secondary school student asked this question about the ICT class "${cls.title}": "${question}". Give a clear, simple, encouraging answer in 2-4 sentences. Be practical and Nigeria-relevant.`}]
-    })
-  });
-  const data = await res.json();
-  return data.content?.[0]?.text || "I'm unable to answer right now. Please ask your trainer.";
+    });
+    return data.content?.[0]?.text || "I'm unable to answer right now. Please ask your trainer.";
+  }catch(err){
+    console.error("fetchQAAnswer failed",err);
+    return "I'm unable to answer right now. Please ask your trainer.";
+  }
 }
 
 // ── MARKDOWN ──────────────────────────────────────────────────────────

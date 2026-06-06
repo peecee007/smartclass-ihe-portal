@@ -4,3 +4,6 @@ services:
     runtime: static
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
+    envVars:
+      - key: VITE_ANTHROPIC_API_KEY
+        sync: false

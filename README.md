@@ -30,6 +30,16 @@ Admin login:
 admin@smartclass.ng / admin123
 ```
 
+### Claude AI Features
+
+Lesson generation, AI class summaries, quiz generation, and Q&A answers require an Anthropic API key:
+
+```text
+VITE_ANTHROPIC_API_KEY=your_anthropic_api_key
+```
+
+Set this value in your local `.env` file or in your host's environment variables before building the app.
+
 Run it in the background:
 
 ```powershell
