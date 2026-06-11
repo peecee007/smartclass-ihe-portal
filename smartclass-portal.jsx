@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Great+Vibes&family=Cinzel:wght@700&display=swap');
@@ -29,6 +29,19 @@ const css = `
   .logo{display:flex;align-items:center;gap:.5rem;font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;color:white}
   .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:pulse 2s ease infinite}
   .logo span{color:var(--gold)}
+  .home-mark{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);font-size:.95rem;line-height:1}
+  .landing-links{display:flex;align-items:center;gap:1.1rem}
+  .landing-link{background:transparent;border:none;color:rgba(255,255,255,.68);font-size:.82rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+  .landing-link:hover{color:var(--gold)}
+  .lang-toggle{display:inline-flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:.45rem .8rem;font-size:.78rem;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif}
+  .lang-toggle:hover{background:rgba(255,255,255,.16)}
+  .lang-btn{padding:3px 8px;border-radius:12px;cursor:pointer;font-size:11px;font-weight:700;border:none;transition:all .2s}
+  .lang-btn.active{background:#10b981;color:#fff}
+  .lang-btn.inactive{background:transparent;color:rgba(255,255,255,.6)}
+  .bilingual-block{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+  .bilingual-en{background:#f0f9ff;border-left:3px solid #3b82f6;padding:12px;border-radius:6px}
+  .bilingual-ig{background:#f0fdf4;border-left:3px solid #10b981;padding:12px;border-radius:6px}
+  .lang-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.7}
   .landing-hero{position:relative;z-index:5;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;text-align:center;gap:1.5rem}
   .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,168,107,.2);border:1px solid rgba(0,168,107,.4);color:var(--green-light);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1rem;border-radius:100px}
   .hero-h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.05;color:white}
@@ -272,12 +285,59 @@ const css = `
   /* ── EXPORT BTN ── */
   .export-btn{background:var(--ink);color:white;padding:.6rem 1.2rem;border-radius:10px;font-size:.82rem;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;transition:all .2s}
   .export-btn:hover{background:var(--ink-mid);transform:translateY(-1px)}
+  .public-sections{position:relative;z-index:10;background:var(--white);color:var(--ink);padding:4rem 2rem 5rem}
+  .public-inner{max-width:1080px;margin:0 auto}
+  .public-section{padding:3rem 0;border-bottom:1px solid rgba(0,168,107,.12)}
+  .public-section:last-child{border-bottom:none}
+  .public-kicker{font-size:.75rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+  .public-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.08;margin:.65rem 0 1rem;color:var(--ink)}
+  .public-copy{max-width:720px;color:var(--ink-soft);line-height:1.75;font-size:1rem}
+  .info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.5rem}
+  .info-card{background:var(--surface);border:1px solid rgba(0,168,107,.12);border-radius:14px;padding:1.25rem}
+  .info-card strong{display:block;font-family:'Syne',sans-serif;margin-bottom:.4rem;color:var(--ink)}
+  .info-card span{color:var(--ink-soft);font-size:.9rem;line-height:1.55}
 
   @media(max-width:768px){
+    .landing-nav{padding:1rem;gap:.75rem;flex-wrap:wrap;justify-content:center}
+    .landing-nav .logo{font-size:1rem;width:100%;justify-content:center}
+    .landing-links{width:100%;justify-content:center;gap:.75rem;flex-wrap:wrap}
+    .landing-link{font-size:.78rem}
+    .landing-nav .btn-sm{padding:.45rem .8rem;font-size:.78rem}
+    .landing-hero{padding:2.5rem 1rem 3rem}
+    .hero-h1{font-size:clamp(1.9rem,12vw,2.6rem);line-height:1.08}
+    .hero-p{font-size:.95rem}
+    .hero-btns{width:100%;max-width:320px;margin-left:auto;margin-right:auto}
+    .hero-btns .btn{width:100%;justify-content:center}
     .sidebar{transform:translateX(-100%)}
     .main-content{margin-left:0}
     .topbar{padding:.75rem 1rem}
     .page-body{padding:1rem}
+    .public-sections{padding:2.5rem 1rem 3.5rem}
+    .public-section{padding:2rem 0}
+    .info-grid{grid-template-columns:1fr}
+    .app-layout{display:block}
+    .sidebar{width:100%!important;height:auto;position:relative;transform:none;flex-direction:row;flex-wrap:wrap;padding:8px;overflow-x:auto;min-height:unset}
+    .sidebar-logo{width:100%;padding:8px 4px 4px;margin-bottom:4px}
+    .sidebar-user{width:100%;padding:8px 4px}
+    .sidebar-nav{display:flex;flex-direction:row;flex-wrap:wrap;gap:4px;width:100%;padding:4px}
+    .sidebar-nav .nav-item{padding:6px 10px!important;font-size:11px!important;border-radius:8px!important;white-space:nowrap;width:auto}
+    .sidebar-footer{width:100%;padding:4px}
+    .main-content{margin-left:0!important;width:100%}
+    .stat-grid,.grid-4{grid-template-columns:1fr 1fr!important}
+    .grid-2,.grid-3{grid-template-columns:1fr!important}
+    .hero-title,.hero-h1{font-size:1.8rem!important}
+    .hero-p{font-size:.95rem!important}
+    .hero-btns{flex-direction:column!important;gap:10px!important}
+    .bilingual-block{grid-template-columns:1fr!important}
+    .topbar{align-items:flex-start;gap:8px;flex-direction:column}
+    .topbar-right{flex-wrap:wrap}
+    .lesson-modal{width:95vw!important;max-width:95vw!important}
+    table{font-size:12px!important}
+    table th,table td{padding:6px 8px!important}
+  }
+  @media(max-width:480px){
+    .stat-grid,.grid-4{grid-template-columns:1fr!important}
+    .hero-title,.hero-h1{font-size:1.4rem!important}
   }
 `;
 
@@ -434,6 +494,96 @@ const SEED_SCHEDULE = [
 const BANNER_COLORS = ["linear-gradient(135deg,#0D1F14,#1a3a24)","linear-gradient(135deg,#1565C0,#1976D2)","linear-gradient(135deg,#1B5E20,#2E7D32)","linear-gradient(135deg,#4527A0,#512DA8)","linear-gradient(135deg,#E65100,#EF6C00)","linear-gradient(135deg,#880E4F,#AD1457)","linear-gradient(135deg,#006B44,#00A86B)"];
 const ICONS = ["🖥️","📝","📊","🌐","🏅","📚","💡","🎯","🔬","📐","🧮","🎓","📱","🛠️","🔐"];
 
+const CLASS_IG = {
+  c1:["Ihe Mbido Kọmputa na Operating System","Malite na mbido. Mụta ihe kọmputa bụ, otu hardware na software si arụkọ ọrụ, iji mouse na keyboard, na ịga ije na Windows nke ọma."],
+  c2:["Microsoft Word na Excel Dị Mkpa","Mụta typing, formatting na Word, na ime spreadsheet dị mfe na Excel maka akwụkwọ ozi, report, na data ụlọ akwụkwọ."],
+  c3:["Internet, Email na Nchekwa Online","Mụta ịchọ ihe na internet, iji email, na ichebe onwe gị pụọ na scam, ozi ụgha, na ihe egwu online."],
+  c4:["HTML Mbido - Mee Page Mbụ Gị","Mụta ihe HTML bụ na otu website si arụ ọrụ. Dee page mbụ gị nwere heading, paragraph, image, na link."],
+  c5:["CSS Styling - Mee Ka Ọ Maa Mma","Tinye agba, font, background, na layout na HTML page. Ghọta selector na class maka ime website mara mma."],
+  c6:["Wuo ma Bipụta Website N'ezie","Jikọta HTML na CSS wuo website nwere Home, About, na Contact, wee bipụta ya online n'efu."],
+  c7:["Ime Presentation Mara Mma na PowerPoint","Mepụta slide nkuzi na PowerPoint, tinye animation, image, chart, na speaker notes."],
+  c8:["Google Classroom na Online Assessment","Tọọ Google Classroom, nye assignment, nata submission, nye feedback, ma mepụta quiz."],
+  c9:["Digital Lesson Plan na Resource Creation","Jiri Canva, Word, na free online tools mepụta worksheet, visual aid, lesson plan, na handout."],
+  c10:["Digital Business na Ohere Online","Chọpụta ụzọ e si enweta ego online na Nigeria: freelancing, content creation, e-commerce, na digital services."],
+  c11:["Social Media Marketing na Personal Branding","Wuo aha gị na WhatsApp, Facebook, na Instagram. Mụta marketing, content, na ịdọta customers."],
+  c12:["Freelancing, Fiverr na Inweta Ego Online","Mepụta Fiverr ma ọ bụ Upwork profile, dee gig description, nweta client mbụ, ma mụta receiving payment."]
+};
+
+const classText = (cls, lang) => {
+  const ig = CLASS_IG[cls.id];
+  if(lang!=="ig") return cls;
+  return {
+    ...cls,
+    title: cls.titleIg || ig?.[0] || cls.title,
+    description: cls.descriptionIg || ig?.[1] || cls.description,
+    objectiveLabel: translateTrack(cls.objectiveLabel || cls.tag, "ig"),
+    tag: translateTrack(cls.tag || cls.objectiveLabel, "ig"),
+    level: translateLevel(cls.level, "ig"),
+    duration: translateDuration(cls.duration, "ig"),
+  };
+};
+
+const TRACK_LABELS = {
+  "Digital Literacy": "Nkà Kọmputa",
+  "Web Development": "Ịrụ Website",
+  "Teacher Digital Tools": "Ngwa Digital Ndị Nkụzi",
+  "Teacher Tools": "Ngwa Ndị Nkụzi",
+  "Digital Entrepreneurship": "Azụmahịa Digital",
+  "Entrepreneurship": "Azụmahịa",
+};
+
+const LEVEL_LABELS = {
+  Beginner: "Mbido",
+  Intermediate: "Etiti",
+  Advanced: "Ọkwa Elu",
+  "All Levels": "Ọkwa Niile",
+};
+
+const translateTrack = (value, lang) => lang==="ig" ? (TRACK_LABELS[value] || value) : value;
+const translateLevel = (value, lang) => lang==="ig" ? (LEVEL_LABELS[value] || value) : value;
+const translateDuration = (value, lang) => {
+  if(lang!=="ig" || !value) return value;
+  const hours = String(value).match(/\d+/)?.[0];
+  return hours ? `${hours} Awa` : value;
+};
+
+function ClassName({ cls, lang="en", compact=false }) {
+  const active = classText(cls, lang);
+  const other = lang==="ig" ? cls : classText(cls, "ig");
+  const hasOther = other.title && other.title !== active.title;
+  return (
+    <div>
+      <div>{active.title}</div>
+      {hasOther && (
+        <div style={{fontSize:compact?".68rem":".74rem",color:"var(--muted)",fontWeight:400,marginTop:".15rem",lineHeight:1.35}}>
+          {lang==="ig" ? "English" : "Igbo"}: {other.title}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const PORTAL_COPY = {
+  en: {
+    toggle:"IG", ready:"Ready", logout:"🚪 Logout",
+    studentNav:{classes:"My Classes",schedule:"Timetable",attendance:"Attendance",announce:"Announcements",donate:"Support & Donate",progress:"My Progress",profile:"My Profile",cert:"Certificate"},
+    studentTitle:{classes:"📚 Classes",schedule:"📅 Class Timetable",attendance:"📋 Attendance",announce:"📢 Announcements",donate:"💚 Support & Donations",progress:"📈 My Progress",profile:"👤 My Profile",cert:"🏅 Certificate"},
+    adminNav:{overview:"Overview",classes:"Manage Classes",users:"Students/Teachers",attendance:"Attendance Register",announce:"Announcements",schedule:"Timetable",leaderboard:"Leaderboard",donations:"Donations",export:"Export Reports",upload:"Upload Class",cert:"Preview Certificate"},
+    adminTitle:{overview:"📊 Overview",classes:"📚 Manage Classes",users:"👥 Students & Teachers",attendance:"📋 Attendance Register",announce:"📢 Announcements",schedule:"📅 Class Timetable",leaderboard:"🏆 Leaderboard & Results",donations:"💚 Donations & Support",export:"⬇️ Export Reports",upload:"⬆️ Upload New Class",cert:"🏅 Certificate Preview"},
+    users:{empty:"No participants registered yet.",all:"All",students:"Students",teachers:"Teachers",name:"Name",role:"Role",school:"School",email:"Email",phone:"Phone",joined:"Joined",total:"Total Registered",student:"Student",teacher:"Teacher",represented:"Schools Represented",enrolled:"enrolled",noneTitle:"No participants yet",noneBody:"Students and teachers will appear here once they sign up."},
+    classActions:{done:"✓ Done",completed:"✓ Completed",review:"📖 Review",open:"Open Lesson →",noClasses:"No classes found"}
+  },
+  ig: {
+    toggle:"EN", ready:"Dị Njikere", logout:"🚪 Pụọ",
+    studentNav:{classes:"Klas M",schedule:"Oge Klas",attendance:"Attendance",announce:"Ozi",donate:"Kwado & Nye Onyinye",progress:"Ọganihu M",profile:"Profile M",cert:"Asambodo"},
+    studentTitle:{classes:"📚 Klas",schedule:"📅 Oge Klas",attendance:"📋 Attendance",announce:"📢 Ozi",donate:"💚 Nkwado & Onyinye",progress:"📈 Ọganihu M",profile:"👤 Profile M",cert:"🏅 Asambodo"},
+    adminNav:{overview:"Nchịkọta",classes:"Jikwaa Klas",users:"Umu Akwukwo/Ndi Nkuzi",attendance:"Attendance Register",announce:"Ozi",schedule:"Oge Klas",leaderboard:"Leaderboard",donations:"Onyinye",export:"Wepụ Report",upload:"Tinye Klas",cert:"Lelee Asambodo"},
+    adminTitle:{overview:"📊 Nchịkọta",classes:"📚 Jikwaa Klas",users:"👥 Umu Akwukwo & Ndi Nkuzi",attendance:"📋 Attendance Register",announce:"📢 Ozi",schedule:"📅 Oge Klas",leaderboard:"🏆 Leaderboard & Results",donations:"💚 Onyinye & Nkwado",export:"⬇️ Wepụ Reports",upload:"⬆️ Tinye Klas Ọhụrụ",cert:"🏅 Lelee Asambodo"},
+    users:{empty:"Onweghị onye debanyere aha.",all:"Niile",students:"Ụmụ Akwụkwọ",teachers:"Ndị Nkụzi",name:"Aha",role:"Ọrụ",school:"Ụlọ Akwụkwọ",email:"Email",phone:"Ekwentị",joined:"Ụbọchị",total:"Ndị Debanyere Aha",student:"Nwa Akwụkwọ",teacher:"Onye Nkụzi",represented:"Ụlọ Akwụkwọ Ndị Dị",enrolled:"debanyere aha",noneTitle:"Onweghị onye ugbu a",noneBody:"Ụmụ akwụkwọ na ndị nkuzi ga-apụta ebe a mgbe ha debanyere aha."},
+    classActions:{done:"✓ Emechara",completed:"✓ Emechara",review:"📖 Lelee",open:"Mepee Nkuzi →",noClasses:"Onweghị klas achọtara"}
+  }
+};
+
 function getUsers()    { try{return JSON.parse(localStorage.getItem(SK_USERS))||[SEED_ADMIN]}catch{return[SEED_ADMIN]} }
 function saveUsers(u)  { localStorage.setItem(SK_USERS,JSON.stringify(u)) }
 function getClasses()  {
@@ -546,7 +696,9 @@ Give 4-5 numbered hands-on exercises participants do in the training room right 
 **✅ Assessment Question**
 One practical question or short task to confirm understanding.
 
-Keep language simple and encouraging. Make every exercise doable on a basic Windows PC. Relate examples to Nigeria where possible.`;
+Keep language simple and encouraging. Make every exercise doable on a basic Windows PC. Relate examples to Nigeria where possible.
+
+Where helpful, include short Igbo translations for key instructions using the labels "English:" and "Igbo:" so learners can follow in either language.`;
 
   try{
     const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:1200,
@@ -577,7 +729,7 @@ async function fetchQuiz(cls) {
   try{
     const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:1000,
       system:"Return ONLY a valid JSON array. No markdown, no backticks, no preamble.",
-      messages:[{role:"user",content:`Create 5 multiple-choice quiz questions for a Nigerian secondary school ICT class: "${cls.title}" (${cls.objectiveLabel||cls.tag}). Each question must test practical understanding. Return a JSON array of exactly 5 objects: [{"q":"question text","opts":["A. option","B. option","C. option","D. option"],"ans":0}] where ans is the 0-based index of the correct option. Make questions specific, clear, and relevant to Nigeria.`}]
+      messages:[{role:"user",content:`Create 5 bilingual multiple-choice quiz questions (English with Igbo translation) for a Nigerian secondary school ICT class: "${cls.title}" (${cls.objectiveLabel||cls.tag}). Each question must test practical understanding. Return a JSON array of exactly 5 objects: [{"q":"question text","opts":["A. option","B. option","C. option","D. option"],"ans":0}] where ans is the 0-based index of the correct option. Make questions specific, clear, and relevant to Nigeria.`}]
     });
     const quiz = parseClaudeJson(data.content?.[0]?.text,[]);
     return Array.isArray(quiz) ? quiz : [];
@@ -591,7 +743,7 @@ async function fetchQuiz(cls) {
 async function fetchQAAnswer(question, cls) {
   try{
     const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:400,
-      messages:[{role:"user",content:`A Nigerian secondary school student asked this question about the ICT class "${cls.title}": "${question}". Give a clear, simple, encouraging answer in 2-4 sentences. Be practical and Nigeria-relevant.`}]
+      messages:[{role:"user",content:`A Nigerian secondary school student asked this bilingual question about the ICT class "${cls.title}": "${question}". Give a clear, simple, encouraging answer in 2-4 sentences. Be practical and Nigeria-relevant. Format the response with two clearly labeled sections: English: and Igbo:. The Igbo section should translate the same answer into Igbo.`}]
     });
     return data.content?.[0]?.text || "I'm unable to answer right now. Please ask your trainer.";
   }catch(err){
@@ -602,6 +754,11 @@ async function fetchQAAnswer(question, cls) {
 
 // ── MARKDOWN ──────────────────────────────────────────────────────────
 function renderMD(text) {
+  text = String(text||"")
+    .replace(/🇬🇧 English:|English:/g, '<div class="lang-label" style="color:#3b82f6">English</div>')
+    .replace(/🟢 Igbo:|Igbo:/g, '<div class="lang-label" style="color:#10b981">Igbo (Asusu Igbo)</div>')
+    .replace(/🇬🇧(.+)/g, '<div style="background:#f0f9ff;border-left:3px solid #3b82f6;padding:8px 12px;margin:4px 0;border-radius:4px">$1</div>')
+    .replace(/🟢(.+)/g, '<div style="background:#f0fdf4;border-left:3px solid #10b981;padding:8px 12px;margin:4px 0;border-radius:4px">$1</div>');
   return text
     .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
     .replace(/^#{1,3} (.+)$/gm,"<h3>$1</h3>")
@@ -916,13 +1073,15 @@ function ProfilePage({ user, onUpdate, toast }) {
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div style={{fontSize:".8rem",color:"var(--muted)"}}>📧 {user.email} <span style={{color:"#DCE9E0"}}>·</span> cannot be changed</div>
           <button className="btn btn-green" onClick={save}>{saved?"✅ Saved!":"💾 Save Changes"}</button>
+        </div>
+      </div>
     </div>
   );
 }
 
 
 // ── SCHEDULE PAGE ─────────────────────────────────────────────────────
-function SchedulePage({ isAdmin, classes }) {
+function SchedulePage({ isAdmin, classes, lang="en" }) {
   const [schedule, setSchedule] = useState(getSchedule());
   const [editing,  setEditing]  = useState(null);
   const todayStr = todayKey();
@@ -964,7 +1123,7 @@ function SchedulePage({ isAdmin, classes }) {
                         {isToday&&<span style={{marginLeft:".4rem",fontSize:".65rem",background:"var(--green)",color:"white",padding:".1rem .4rem",borderRadius:"100px",fontWeight:700}}>TODAY</span>}
                       </td>
                       <td style={{fontSize:".78rem",color:"var(--muted)"}}>{s.module}</td>
-                      <td style={{fontWeight:isToday||isGrad?700:400,color:isGrad?"#a06800":"var(--ink)"}}>{s.title}</td>
+                      <td style={{fontWeight:isToday||isGrad?700:400,color:isGrad?"#a06800":"var(--ink)"}}>{classText(classes.find(c=>c.title===s.title)||s,lang).title}</td>
                       <td style={{whiteSpace:"nowrap",fontSize:".78rem"}}>{s.time}</td>
                       <td><span style={{fontSize:".72rem",padding:".2rem .55rem",borderRadius:"100px",background:"var(--surface)",fontWeight:600}}>{s.room}</span></td>
                       <td><span style={{fontSize:".68rem",fontWeight:700,padding:".2rem .55rem",borderRadius:"100px",background:`${objColor(s.objective)}18`,color:objColor(s.objective)}}>{s.objective}</span></td>
@@ -1310,6 +1469,8 @@ function LeaderboardPage({ classes }) {
               }
             </tbody>
           </table>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1411,10 +1572,10 @@ function DonationsPage({ user, toast }) {
   ];
 
   const METHODS = [
-    {id:"bank",    icon:"🏦", name:"Bank Transfer",    detail:"GTBank · 0123456789 · SmartClass Ihe SYTI"},
-    {id:"opay",    icon:"💚", name:"OPay",             detail:"Phone: 08012345678 · Name: Gabriel Benmoore"},
-    {id:"palmpay", icon:"🌴", name:"PalmPay",          detail:"Phone: 08012345678 · Name: Gabriel Benmoore"},
-    {id:"cash",    icon:"💵", name:"Cash at Training", detail:"Pay directly to coordinator at Christ Vision Academy"},
+    {id:"bank",    icon:"🏦", name:"Bank Transfer / Ntinye Ulo Akwukwo", detail:"First Bank of Nigeria · 3227711201 · Gabriel Pius Benmoore"},
+    {id:"palmpay", icon:"🌴", name:"PalmPay",          detail:"Phone: 09039504921 · Gabriel Pius Benmoore"},
+    {id:"cash",    icon:"💵", name:"Cash / Ego Aka",   detail:"See coordinator · Hu onye nduzi"},
+    {id:"cash-training", icon:"💵", name:"Cash at Training", detail:"Pay directly to coordinator at Christ Vision Academy"},
   ];
 
   const finalAmount = amount==="custom" ? custom : amount;
@@ -1582,7 +1743,7 @@ function DonationsPage({ user, toast }) {
             <input className="form-input" placeholder="08012345678" value={form.phone} onChange={e=>set("phone",e.target.value)}/>
           </div>
           <div className="form-group"><label className="form-label">Organization / School</label>
-            <input className="form-input" placeholder="e.g. GTBank, UNICEF, Personal" value={form.school} onChange={e=>set("school",e.target.value)}/>
+            <input className="form-input" placeholder="e.g. First Bank of Nigeria, UNICEF, Personal" value={form.school} onChange={e=>set("school",e.target.value)}/>
           </div>
         </div>
         <div className="form-group"><label className="form-label">Message (optional)</label>
@@ -1667,8 +1828,7 @@ function AdminDonationsPage({ toast }) {
       "₦"+d.amount.toLocaleString(),d.tierName,d.methodName,d.status,
       new Date(d.date).toLocaleDateString("en-GB"),d.note||""]);
     const lines=["Ref,Name,Email,Phone,Organization,Amount,Tier,Method,Status,Date,Note",...rows.map(r=>r.map(c=>typeof c==="string"&&c.includes(",")? `"${c}"`:c).join(","))];
-    const blob=new Blob([lines.join("
-")],{type:"text/csv"});
+    const blob=new Blob([lines.join("\n")],{type:"text/csv"});
     const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="SYTI_Donations.csv"; a.click();
     toast.push("Donations exported to CSV ✅","green");
   };
@@ -2034,7 +2194,7 @@ function LessonModal({ cls, userId, onClose, onComplete, alreadyDone }) {
 }
 
 // ── CERTIFICATE PAGE ──────────────────────────────────────────────────
-function CertificatePage({ user, classes, completed }) {
+function CertificatePage({ user, classes, completed, lang="en" }) {
   const total    = classes.length;
   const done     = completed.length;
   const pct      = total === 0 ? 0 : Math.round((done/total)*100);
@@ -2063,7 +2223,7 @@ function CertificatePage({ user, classes, completed }) {
                   {isDone ? "✓" : <span style={{color:"var(--muted)",fontSize:".75rem"}}>{i+1}</span>}
                 </div>
                 <div style={{flex:1}}>
-                  <div style={{fontSize:".875rem",fontWeight:isDone?600:400,color:isDone?"var(--ink)":"var(--muted)"}}>{c.icon} {c.title}</div>
+                  <div style={{fontSize:".875rem",fontWeight:isDone?600:400,color:isDone?"var(--ink)":"var(--muted)"}}>{c.icon} {classText(c,lang).title}</div>
                 </div>
                 {isDone && <span className="tag tag-green">Done</span>}
               </div>
@@ -2109,7 +2269,7 @@ function CertificatePage({ user, classes, completed }) {
 }
 
 // ── STUDENT DASHBOARD ─────────────────────────────────────────────────
-function StudentDashboard({ user }) {
+function StudentDashboard({ user, lang="en", setLang=()=>{} }) {
   const [classes]   = useState(getClasses());
   const [completed, setCompleted] = useState(getCompleted(user.id));
   const [active, setActive]   = useState("classes");
@@ -2118,6 +2278,7 @@ function StudentDashboard({ user }) {
   const [search, setSearch]   = useState("");
   const [currentUser, setCurrentUser] = useState(user);
   const toast = useToast();
+  const tx = PORTAL_COPY[lang];
 
   const tags     = ["All","Digital Literacy","Web Development","Teacher Tools","Entrepreneurship"];
   const filtered = classes.filter(c=>(filter==="All"||c.tag===filter||c.objectiveLabel===filter)&&(c.title.toLowerCase().includes(search.toLowerCase())||c.module.toLowerCase().includes(search.toLowerCase())||( c.objectiveLabel||"").toLowerCase().includes(search.toLowerCase())));
@@ -2131,7 +2292,13 @@ function StudentDashboard({ user }) {
   return (
     <div className="app-layout">
       <aside className="sidebar">
-        <div className="sidebar-logo"><div className="logo"><div className="logo-dot"/>Smart<span>Class</span></div></div>
+        <div className="sidebar-logo" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
+          <div className="logo"><div className="logo-dot"/>Smart<span>Class</span></div>
+          <div style={{display:"flex",gap:3}}>
+            <button className={"lang-btn "+(lang==="en"?"active":"inactive")} onClick={()=>setLang("en")}>EN</button>
+            <button className={"lang-btn "+(lang==="ig"?"active":"inactive")} onClick={()=>setLang("ig")}>IG</button>
+          </div>
+        </div>
         <div className="sidebar-user">
           <div className="user-avatar">{initials(user.name)}</div>
           <div>
@@ -2142,19 +2309,19 @@ function StudentDashboard({ user }) {
         </div>
         <nav className="sidebar-nav">
           {[
-            {id:"classes",   icon:"📚", label:"My Classes",     badge:classes.length},
-            {id:"schedule",  icon:"📅", label:"Timetable"},
-            {id:"attendance",icon:"📋", label:"Attendance"},
-            {id:"announce",  icon:"📢", label:"Announcements",  badge: getPosts().length||null},
-            {id:"donate",    icon:"💚", label:"Support & Donate"},
-            {id:"progress",  icon:"📈", label:"My Progress"},
-            {id:"profile",   icon:"👤", label:"My Profile"},
-            {id:"cert",      icon:"🏅", label:"Certificate",    certBadge:unlocked},
+            {id:"classes",   icon:"📚", label:tx.studentNav.classes,     badge:classes.length},
+            {id:"schedule",  icon:"📅", label:tx.studentNav.schedule},
+            {id:"attendance",icon:"📋", label:tx.studentNav.attendance},
+            {id:"announce",  icon:"📢", label:tx.studentNav.announce,  badge: getPosts().length||null},
+            {id:"donate",    icon:"💚", label:tx.studentNav.donate},
+            {id:"progress",  icon:"📈", label:tx.studentNav.progress},
+            {id:"profile",   icon:"👤", label:tx.studentNav.profile},
+            {id:"cert",      icon:"🏅", label:tx.studentNav.cert,    certBadge:unlocked},
           ].map(item=>(
             <button key={item.id} className={`nav-item ${active===item.id?"active":""}`} onClick={()=>setActive(item.id)}>
               <span className="icon">{item.icon}</span>{item.label}
               {item.badge && <span className="badge">{item.badge}</span>}
-              {item.certBadge && <span className="cert-badge">✓ Ready</span>}
+              {item.certBadge && <span className="cert-badge">{tx.ready}</span>}
             </button>
           ))}
         </nav>
@@ -2169,16 +2336,10 @@ function StudentDashboard({ user }) {
       <main className="main-content">
         <div className="topbar">
           <div className="topbar-title">
-            {active==="classes"&&"📚 Classes"}
-            {active==="schedule"&&"📅 Class Timetable"}
-            {active==="attendance"&&"📋 Attendance"}
-            {active==="announce"&&"📢 Announcements"}
-            {active==="donate"&&"💚 Support & Donations"}
-            {active==="progress"&&"📈 My Progress"}
-            {active==="profile"&&"👤 My Profile"}
-            {active==="cert"&&"🏅 Certificate"}
+            {tx.studentTitle[active]}
           </div>
           <div className="topbar-right">
+            <button className="lang-toggle" style={{color:"var(--ink)",borderColor:"rgba(0,168,107,.24)",background:"var(--surface)"}} onClick={()=>setLang(lang==="en"?"ig":"en")}>{tx.toggle}</button>
             {pct>0&&<div style={{display:"flex",alignItems:"center",gap:".5rem",fontSize:".82rem",color:"var(--muted)"}}>
               <div className="progress-bar" style={{width:"80px"}}><div className="progress-fill" style={{width:`${pct}%`}}/></div>
               <span>{pct}%</span>
@@ -2199,7 +2360,7 @@ function StudentDashboard({ user }) {
                   <div style={{background:"rgba(245,166,35,.1)",border:"1.5px solid rgba(245,166,35,.3)",borderRadius:"14px",padding:"1rem 1.25rem",marginBottom:"1.25rem",display:"flex",alignItems:"center",gap:"1rem",flexWrap:"wrap"}}>
                     <span style={{fontSize:"1.5rem"}}>📅</span>
                     <div style={{flex:1}}>
-                      <div style={{fontWeight:700,color:"var(--ink)",fontSize:".9rem"}}>Today: {todaySched.title}</div>
+                      <div style={{fontWeight:700,color:"var(--ink)",fontSize:".9rem"}}>Today: {classText(classes.find(c=>c.title===todaySched.title)||todaySched,lang).title}</div>
                       <div style={{fontSize:".78rem",color:"var(--muted)"}}>{todaySched.time} · {todaySched.room} · {todaySched.module}</div>
                     </div>
                     <button className="btn btn-gold btn-sm" onClick={()=>setActive("attendance")}>📋 Check In</button>
@@ -2213,10 +2374,10 @@ function StudentDashboard({ user }) {
 
               {/* Objective Summary Strips */}
               {[
-                {obj:"Objective 1", label:"Digital Literacy",        icon:"💻", color:"#00A86B", bg:"rgba(0,168,107,.08)",  border:"rgba(0,168,107,.2)"},
-                {obj:"Objective 2", label:"Web Development",         icon:"🌐", color:"#1976D2", bg:"rgba(25,118,210,.08)", border:"rgba(25,118,210,.2)"},
-                {obj:"Objective 3", label:"Teacher Digital Tools",   icon:"👩‍🏫", color:"#7B1FA2", bg:"rgba(123,31,162,.08)", border:"rgba(123,31,162,.2)"},
-                {obj:"Objective 4", label:"Digital Entrepreneurship",icon:"💰", color:"#E65100", bg:"rgba(230,81,0,.08)",   border:"rgba(230,81,0,.2)"},
+                {obj:"Objective 1", label:translateTrack("Digital Literacy", lang),        icon:"💻", color:"#00A86B", bg:"rgba(0,168,107,.08)",  border:"rgba(0,168,107,.2)"},
+                {obj:"Objective 2", label:translateTrack("Web Development", lang),         icon:"🌐", color:"#1976D2", bg:"rgba(25,118,210,.08)", border:"rgba(25,118,210,.2)"},
+                {obj:"Objective 3", label:translateTrack("Teacher Digital Tools", lang),   icon:"👩‍🏫", color:"#7B1FA2", bg:"rgba(123,31,162,.08)", border:"rgba(123,31,162,.2)"},
+                {obj:"Objective 4", label:translateTrack("Digital Entrepreneurship", lang),icon:"💰", color:"#E65100", bg:"rgba(230,81,0,.08)",   border:"rgba(230,81,0,.2)"},
               ].map(track => {
                 const trackClasses = classes.filter(c=>c.objective===track.obj);
                 const trackDone    = trackClasses.filter(c=>completed.includes(c.id)).length;
@@ -2250,10 +2411,10 @@ function StudentDashboard({ user }) {
               {/* Classes grouped by objective */}
               {filter==="All" && search===""
                 ? [
-                    {obj:"Objective 1", label:"Digital Literacy",         icon:"💻", accent:"#00A86B"},
-                    {obj:"Objective 2", label:"Web Development",          icon:"🌐", accent:"#1976D2"},
-                    {obj:"Objective 3", label:"Teacher Digital Tools",    icon:"👩‍🏫", accent:"#7B1FA2"},
-                    {obj:"Objective 4", label:"Digital Entrepreneurship", icon:"💰", accent:"#E65100"},
+                    {obj:"Objective 1", label:translateTrack("Digital Literacy", lang),         icon:"💻", accent:"#00A86B"},
+                    {obj:"Objective 2", label:translateTrack("Web Development", lang),          icon:"🌐", accent:"#1976D2"},
+                    {obj:"Objective 3", label:translateTrack("Teacher Digital Tools", lang),    icon:"👩‍🏫", accent:"#7B1FA2"},
+                    {obj:"Objective 4", label:translateTrack("Digital Entrepreneurship", lang), icon:"💰", accent:"#E65100"},
                   ].map(track => {
                     const trackClasses = classes.filter(c=>c.objective===track.obj);
                     return (
@@ -2279,13 +2440,13 @@ function StudentDashboard({ user }) {
                                     <span style={{fontSize:".68rem",fontWeight:700,letterSpacing:".06em",textTransform:"uppercase",color:track.accent,background:`${track.accent}15`,padding:".2rem .55rem",borderRadius:"100px"}}>{track.icon} {track.label}</span>
                                     <span style={{fontSize:".68rem",color:"var(--muted)"}}>{c.module}</span>
                                   </div>
-                                  <div className="class-title">{c.title}</div>
-                                  <div className="class-meta">{c.duration} · {c.level}</div>
-                                  <div className="class-desc">{c.description}</div>
+                                  <div className="class-title"><ClassName cls={c} lang={lang}/></div>
+                                  <div className="class-meta">{classText(c,lang).duration} · {classText(c,lang).level}</div>
+                                  <div className="class-desc">{classText(c,lang).description}</div>
                                   <div className="class-footer">
-                                    <span className={`tag ${isDone?"tag-green":"tag-blue"}`}>{isDone?"✓ Completed":c.tag}</span>
-                                    <button className={`btn btn-sm ${isDone?"btn-outline-green":"btn-green"}`} onClick={()=>setSelected(c)}>
-                                      {isDone ? "📖 Review" : "Open Lesson →"}
+                                    <span className={`tag ${isDone?"tag-green":"tag-blue"}`}>{isDone?tx.classActions.completed:translateTrack(c.tag, lang)}</span>
+                                    <button className={`btn btn-sm ${isDone?"btn-outline-green":"btn-green"}`} onClick={()=>setSelected(classText(c,lang))}>
+                                      {isDone ? tx.classActions.review : tx.classActions.open}
                                     </button>
                                   </div>
                                 </div>
@@ -2297,7 +2458,7 @@ function StudentDashboard({ user }) {
                     );
                   })
                 : filtered.length===0
-                  ? <div className="empty"><div className="empty-icon">🔍</div><div className="empty-text">No classes found</div></div>
+                  ? <div className="empty"><div className="empty-icon">🔍</div><div className="empty-text">{tx.classActions.noClasses}</div></div>
                   : <div className="grid-2">
                       {filtered.map((c,i)=>{
                         const isDone = completed.includes(c.id);
@@ -2308,13 +2469,13 @@ function StudentDashboard({ user }) {
                               {isDone && <div className="completed-ribbon">✓ Done</div>}
                             </div>
                             <div className="class-body">
-                              <div className="class-title">{c.title}</div>
-                              <div className="class-meta">{c.module} · {c.duration} · {c.level}</div>
-                              <div className="class-desc">{c.description}</div>
+                              <div className="class-title"><ClassName cls={c} lang={lang}/></div>
+                              <div className="class-meta">{c.module} · {classText(c,lang).duration} · {classText(c,lang).level}</div>
+                              <div className="class-desc">{classText(c,lang).description}</div>
                               <div className="class-footer">
-                                <span className="tag tag-green">{c.tag}</span>
-                                <button className={`btn btn-sm ${isDone?"btn-outline-green":"btn-green"}`} onClick={()=>setSelected(c)}>
-                                  {isDone ? "📖 Review" : "Open Lesson →"}
+                                <span className="tag tag-green">{translateTrack(c.tag, lang)}</span>
+                                <button className={`btn btn-sm ${isDone?"btn-outline-green":"btn-green"}`} onClick={()=>setSelected(classText(c,lang))}>
+                                  {isDone ? tx.classActions.review : tx.classActions.open}
                                 </button>
                               </div>
                             </div>
@@ -2362,10 +2523,10 @@ function StudentDashboard({ user }) {
 
               {/* Per-objective breakdown */}
               {[
-                {obj:"Objective 1", label:"Digital Literacy",         icon:"💻", accent:"#00A86B", bg:"rgba(0,168,107,.06)"},
-                {obj:"Objective 2", label:"Web Development",          icon:"🌐", accent:"#1976D2", bg:"rgba(25,118,210,.06)"},
-                {obj:"Objective 3", label:"Teacher Digital Tools",    icon:"👩‍🏫", accent:"#7B1FA2", bg:"rgba(123,31,162,.06)"},
-                {obj:"Objective 4", label:"Digital Entrepreneurship", icon:"💰", accent:"#E65100", bg:"rgba(230,81,0,.06)"},
+                {obj:"Objective 1", label:translateTrack("Digital Literacy", lang),         icon:"💻", accent:"#00A86B", bg:"rgba(0,168,107,.06)"},
+                {obj:"Objective 2", label:translateTrack("Web Development", lang),          icon:"🌐", accent:"#1976D2", bg:"rgba(25,118,210,.06)"},
+                {obj:"Objective 3", label:translateTrack("Teacher Digital Tools", lang),    icon:"👩‍🏫", accent:"#7B1FA2", bg:"rgba(123,31,162,.06)"},
+                {obj:"Objective 4", label:translateTrack("Digital Entrepreneurship", lang), icon:"💰", accent:"#E65100", bg:"rgba(230,81,0,.06)"},
               ].map(track => {
                 const tClasses = classes.filter(c=>c.objective===track.obj);
                 const tDone    = tClasses.filter(c=>completed.includes(c.id)).length;
@@ -2390,7 +2551,7 @@ function StudentDashboard({ user }) {
                           <div style={{width:22,height:22,borderRadius:"50%",background:isDone?track.accent:"#E8F2EB",display:"flex",alignItems:"center",justifyContent:"center",fontSize:".72rem",color:isDone?"white":"var(--muted)",fontWeight:700,flexShrink:0}}>
                             {isDone ? "✓" : "○"}
                           </div>
-                          <span style={{fontSize:".85rem",flex:1,color:isDone?"var(--ink)":"var(--muted)",fontWeight:isDone?500:400}}>{c.icon} {c.title}</span>
+                          <div style={{fontSize:".85rem",flex:1,color:isDone?"var(--ink)":"var(--muted)",fontWeight:isDone?500:400,display:"flex",gap:".35rem",alignItems:"flex-start"}}><span>{c.icon}</span><ClassName cls={c} lang={lang} compact={true}/></div>
                           <span style={{fontSize:".72rem",color:"var(--muted)"}}>{c.module}</span>
                           {isDone && <span style={{fontSize:".7rem",background:`${track.accent}20`,color:track.accent,fontWeight:700,padding:".15rem .5rem",borderRadius:"100px"}}>Done</span>}
                         </div>
@@ -2402,13 +2563,13 @@ function StudentDashboard({ user }) {
             </div>
           )}
 
-          {active==="schedule"   && <SchedulePage isAdmin={false} classes={classes}/>}
+          {active==="schedule"   && <SchedulePage isAdmin={false} classes={classes} lang={lang}/>}
           {active==="donate"     && <DonationsPage user={currentUser} toast={toast}/>}
           {active==="attendance" && <AttendancePage user={currentUser} toast={toast} isAdmin={false}/>}
           {active==="announce"   && <AnnouncementsPage user={currentUser} toast={toast}/>}
           {active==="profile"    && <ProfilePage user={currentUser} toast={toast} onUpdate={u=>{setCurrentUser(u);}}/>}
           {active==="cert" && (
-            <CertificatePage user={currentUser} classes={classes} completed={completed}/>
+            <CertificatePage user={currentUser} classes={classes} completed={completed} lang={lang}/>
           )}
         </div>
       </main>
@@ -2421,7 +2582,7 @@ function StudentDashboard({ user }) {
 // ── CLASS FORM ────────────────────────────────────────────────────────
 function ClassForm({ initial, onSave, onCancel, toast }) {
   const [form, setForm] = useState({
-    title:initial?.title||"", module:initial?.module||"", description:initial?.description||"",
+    title:initial?.title||"", titleIg:initial?.titleIg||"", module:initial?.module||"", description:initial?.description||"", descriptionIg:initial?.descriptionIg||"",
     duration:initial?.duration||"2 Hours", level:initial?.level||"Beginner",
     tag:initial?.tag||"Digital Literacy", icon:initial?.icon||"📚", color:initial?.color||BANNER_COLORS[0],
     objective:initial?.objective||"Objective 1", objectiveLabel:initial?.objectiveLabel||"Digital Literacy",
@@ -2451,6 +2612,7 @@ function ClassForm({ initial, onSave, onCancel, toast }) {
   return (
     <div>
       <div className="form-group"><label className="form-label">Class Title *</label><input className="form-input" placeholder="e.g. Microsoft Word Essentials" value={form.title} onChange={e=>set("title",e.target.value)}/></div>
+      <div className="form-group"><label className="form-label">Class Title in Igbo</label><input className="form-input" placeholder="e.g. Microsoft Word na Excel Dị Mkpa" value={form.titleIg} onChange={e=>set("titleIg",e.target.value)}/></div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem"}}>
         <div className="form-group"><label className="form-label">Module *</label><input className="form-input" placeholder="e.g. Module 2" value={form.module} onChange={e=>set("module",e.target.value)}/></div>
         <div className="form-group"><label className="form-label">Duration</label>
@@ -2460,6 +2622,7 @@ function ClassForm({ initial, onSave, onCancel, toast }) {
         </div>
       </div>
       <div className="form-group"><label className="form-label">Description *</label><textarea className="form-input" rows={3} placeholder="What will students learn?" value={form.description} onChange={e=>set("description",e.target.value)} style={{resize:"vertical"}}/></div>
+      <div className="form-group"><label className="form-label">Description in Igbo</label><textarea className="form-input" rows={3} placeholder="Kedu ihe ụmụ akwụkwọ ga-amụta?" value={form.descriptionIg} onChange={e=>set("descriptionIg",e.target.value)} style={{resize:"vertical"}}/></div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1rem"}}>
         <div className="form-group"><label className="form-label">Level</label>
           <select className="form-input form-select" value={form.level} onChange={e=>set("level",e.target.value)}>
@@ -2503,7 +2666,8 @@ function ClassForm({ initial, onSave, onCancel, toast }) {
 }
 
 // ── USERS PANEL (Admin) ───────────────────────────────────────────────
-function UsersPanel({ users, initials: ini }) {
+function UsersPanel({ users, initials: ini, lang="en" }) {
+  const tx = PORTAL_COPY[lang].users;
   const nonAdmin = users.filter(u=>u.role!=="admin");
   const students  = nonAdmin.filter(u=>u.role==="student");
   const teachers  = nonAdmin.filter(u=>u.role==="teacher");
@@ -2516,17 +2680,17 @@ function UsersPanel({ users, initials: ini }) {
     <div>
       {/* Stats */}
       <div className="grid-4" style={{marginBottom:"1.5rem"}}>
-        <div className="stat-card"><div className="stat-icon green">👥</div><div className="stat-val">{nonAdmin.length}</div><div className="stat-label">Total Enrolled</div></div>
-        <div className="stat-card"><div className="stat-icon gold">🎓</div><div className="stat-val">{students.length}</div><div className="stat-label">Students</div></div>
-        <div className="stat-card"><div className="stat-icon blue">👩‍🏫</div><div className="stat-val">{teachers.length}</div><div className="stat-label">Teachers</div></div>
-        <div className="stat-card"><div className="stat-icon red">🏫</div><div className="stat-val">{schools.length}</div><div className="stat-label">Schools</div></div>
+        <div className="stat-card"><div className="stat-icon green">👥</div><div className="stat-val">{nonAdmin.length}</div><div className="stat-label">{tx.total}</div></div>
+        <div className="stat-card"><div className="stat-icon gold">🎓</div><div className="stat-val">{students.length}</div><div className="stat-label">{tx.students}</div></div>
+        <div className="stat-card"><div className="stat-icon blue">👩‍🏫</div><div className="stat-val">{teachers.length}</div><div className="stat-label">{tx.teachers}</div></div>
+        <div className="stat-card"><div className="stat-icon red">🏫</div><div className="stat-val">{schools.length}</div><div className="stat-label">{tx.school}</div></div>
       </div>
 
       {/* Schools Breakdown */}
       {schools.length>0 && (
         <div className="card card-pad" style={{marginBottom:"1.5rem"}}>
           <div style={{fontFamily:"'Syne',sans-serif",fontWeight:700,marginBottom:"1rem",fontSize:".95rem"}}>
-            🏫 Schools Represented ({schools.length})
+            🏫 {tx.represented} ({schools.length})
           </div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:".65rem"}}>
             {schools.map(s=>{
@@ -2537,9 +2701,9 @@ function UsersPanel({ users, initials: ini }) {
                 <div key={s} style={{background:"var(--surface)",borderRadius:"12px",padding:"1rem",border:"1px solid rgba(0,168,107,.12)",transition:"box-shadow .2s"}}>
                   <div style={{fontWeight:700,fontSize:".875rem",color:"var(--ink)",marginBottom:".4rem",lineHeight:1.3}}>🏫 {s}</div>
                   <div style={{display:"flex",gap:".75rem",flexWrap:"wrap"}}>
-                    <span style={{fontSize:".72rem",background:"rgba(0,168,107,.1)",color:"var(--green-dark)",padding:".15rem .55rem",borderRadius:"100px",fontWeight:600}}>👥 {total} enrolled</span>
-                    {sCount>0&&<span style={{fontSize:".72rem",background:"rgba(245,166,35,.1)",color:"#a06800",padding:".15rem .55rem",borderRadius:"100px",fontWeight:600}}>🎓 {sCount} students</span>}
-                    {tCount>0&&<span style={{fontSize:".72rem",background:"rgba(123,31,162,.1)",color:"#7B1FA2",padding:".15rem .55rem",borderRadius:"100px",fontWeight:600}}>👩‍🏫 {tCount} teachers</span>}
+                    <span style={{fontSize:".72rem",background:"rgba(0,168,107,.1)",color:"var(--green-dark)",padding:".15rem .55rem",borderRadius:"100px",fontWeight:600}}>👥 {total} {tx.enrolled}</span>
+                    {sCount>0&&<span style={{fontSize:".72rem",background:"rgba(245,166,35,.1)",color:"#a06800",padding:".15rem .55rem",borderRadius:"100px",fontWeight:600}}>🎓 {sCount} {tx.students}</span>}
+                    {tCount>0&&<span style={{fontSize:".72rem",background:"rgba(123,31,162,.1)",color:"#7B1FA2",padding:".15rem .55rem",borderRadius:"100px",fontWeight:600}}>👩‍🏫 {tCount} {tx.teachers}</span>}
                   </div>
                 </div>
               );
@@ -2551,14 +2715,14 @@ function UsersPanel({ users, initials: ini }) {
       {schools.length===0 && nonAdmin.length===0 && (
         <div style={{background:"rgba(0,168,107,.05)",borderRadius:"12px",padding:"2rem",textAlign:"center",marginBottom:"1.5rem",border:"1px dashed rgba(0,168,107,.2)"}}>
           <div style={{fontSize:"2rem",marginBottom:".5rem"}}>👥</div>
-          <div style={{fontWeight:600,color:"var(--ink-soft)",marginBottom:".25rem"}}>No participants yet</div>
-          <div style={{fontSize:".82rem",color:"var(--muted)"}}>Students and teachers will appear here once they sign up.</div>
+          <div style={{fontWeight:600,color:"var(--ink-soft)",marginBottom:".25rem"}}>{tx.noneTitle}</div>
+          <div style={{fontSize:".82rem",color:"var(--muted)"}}>{tx.noneBody}</div>
         </div>
       )}
 
       {/* Tab filter */}
       <div style={{display:"flex",gap:".5rem",marginBottom:"1rem",flexWrap:"wrap"}}>
-        {[["all",`All (${nonAdmin.length})`],["student",`🎓 Students (${students.length})`],["teacher",`👩‍🏫 Teachers (${teachers.length})`]].map(([k,l])=>(
+        {[["all",`${tx.all} (${nonAdmin.length})`],["student",`🎓 ${tx.students} (${students.length})`],["teacher",`👩‍🏫 ${tx.teachers} (${teachers.length})`]].map(([k,l])=>(
           <button key={k} className={`btn btn-sm ${tab===k?"btn-green":"btn-outline-green"}`} onClick={()=>setTab(k)}>{l}</button>
         ))}
       </div>
@@ -2568,18 +2732,18 @@ function UsersPanel({ users, initials: ini }) {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Role</th>
-              <th>School</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Joined</th>
+              <th>{tx.name}</th>
+              <th>{tx.role}</th>
+              <th>{tx.school}</th>
+              <th>{tx.email}</th>
+              <th>{tx.phone}</th>
+              <th>{tx.joined}</th>
             </tr>
           </thead>
           <tbody>
             {shown.length===0
               ? <tr><td colSpan={6} style={{textAlign:"center",padding:"2rem",color:"var(--muted)"}}>
-                  No {tab==="all"?"participants":tab+"s"} registered yet.
+                  {tx.empty}
                 </td></tr>
               : shown.map(u=>(
                   <tr key={u.id}>
@@ -2597,7 +2761,7 @@ function UsersPanel({ users, initials: ini }) {
                     </td>
                     <td>
                       <span className={`tag ${u.role==="teacher"?"tag-gold":"tag-green"}`}>
-                        {u.role==="teacher"?"👩‍🏫 Teacher":"🎓 Student"}
+                        {u.role==="teacher"?`👩‍🏫 ${tx.teacher}`:`🎓 ${tx.student}`}
                       </span>
                     </td>
                     <td style={{fontSize:".82rem",color:"var(--ink-soft)",maxWidth:"200px"}}>
@@ -2623,7 +2787,7 @@ function UsersPanel({ users, initials: ini }) {
 }
 
 // ── ADMIN DASHBOARD ───────────────────────────────────────────────────
-function AdminDashboard({ user, toast }) {
+function AdminDashboard({ user, toast, lang="en", setLang=()=>{} }) {
   const [classes, setClasses] = useState(getClasses());
   const [users]   = useState(getUsers());
   const [active, setActive]       = useState("overview");
@@ -2631,6 +2795,7 @@ function AdminDashboard({ user, toast }) {
   const [editTarget, setEditTarget]     = useState(null);
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [adminFilter, setAdminFilter]   = useState("all");
+  const tx = PORTAL_COPY[lang];
 
   const persist = c => { setClasses(c); saveClasses(c); };
   const deleteClass = id => { if(confirm("Delete this class?")){ persist(classes.filter(c=>c.id!==id)); toast.push("Class deleted.","green"); } };
@@ -2645,17 +2810,17 @@ function AdminDashboard({ user, toast }) {
         </div>
         <nav className="sidebar-nav">
           {[
-            {id:"overview",    icon:"📊", label:"Overview"},
-            {id:"classes",     icon:"📚", label:"Manage Classes",    badge:classes.length},
-            {id:"users",       icon:"👥", label:"Students/Teachers", badge:users.filter(u=>u.role!=="admin").length},
-            {id:"attendance",  icon:"📋", label:"Attendance Register"},
-            {id:"announce",    icon:"📢", label:"Announcements"},
-            {id:"schedule",    icon:"📅", label:"Timetable"},
-            {id:"leaderboard", icon:"🏆", label:"Leaderboard"},
-            {id:"donations",   icon:"💚", label:"Donations",  badge:getDonations().filter(d=>d.status==="pending").length||null},
-            {id:"export",      icon:"⬇️", label:"Export Reports"},
-            {id:"upload",      icon:"⬆️", label:"Upload Class"},
-            {id:"cert",        icon:"🏅", label:"Preview Certificate"},
+            {id:"overview",    icon:"📊", label:tx.adminNav.overview},
+            {id:"classes",     icon:"📚", label:tx.adminNav.classes,    badge:classes.length},
+            {id:"users",       icon:"👥", label:tx.adminNav.users, badge:users.filter(u=>u.role!=="admin").length},
+            {id:"attendance",  icon:"📋", label:tx.adminNav.attendance},
+            {id:"announce",    icon:"📢", label:tx.adminNav.announce},
+            {id:"schedule",    icon:"📅", label:tx.adminNav.schedule},
+            {id:"leaderboard", icon:"🏆", label:tx.adminNav.leaderboard},
+            {id:"donations",   icon:"💚", label:tx.adminNav.donations,  badge:getDonations().filter(d=>d.status==="pending").length||null},
+            {id:"export",      icon:"⬇️", label:tx.adminNav.export},
+            {id:"upload",      icon:"⬆️", label:tx.adminNav.upload},
+            {id:"cert",        icon:"🏅", label:tx.adminNav.cert},
           ].map(item=>(
             <button key={item.id} className={`nav-item ${active===item.id?"active":""}`} onClick={()=>setActive(item.id)}>
               <span className="icon">{item.icon}</span>{item.label}
@@ -2669,19 +2834,10 @@ function AdminDashboard({ user, toast }) {
       <main className="main-content">
         <div className="topbar">
           <div className="topbar-title">
-            {active==="overview"&&"📊 Overview"}
-            {active==="classes"&&"📚 Manage Classes"}
-            {active==="users"&&"👥 Students & Teachers"}
-            {active==="attendance"&&"📋 Attendance Register"}
-            {active==="announce"&&"📢 Announcements"}
-            {active==="schedule"&&"📅 Class Timetable"}
-            {active==="leaderboard"&&"🏆 Leaderboard & Results"}
-            {active==="donations"&&"💚 Donations & Support"}
-            {active==="export"&&"⬇️ Export Reports"}
-            {active==="upload"&&"⬆️ Upload New Class"}
-            {active==="cert"&&"🏅 Certificate Preview"}
+            {tx.adminTitle[active]}
           </div>
           <div className="topbar-right">
+            <button className="lang-toggle" style={{color:"var(--ink)",borderColor:"rgba(0,168,107,.24)",background:"var(--surface)"}} onClick={()=>setLang(lang==="en"?"ig":"en")}>{tx.toggle}</button>
             {active==="classes"&&<button className="btn btn-green btn-sm" onClick={()=>setShowAdd(true)}>+ Add Class</button>}
           </div>
         </div>
@@ -2701,10 +2857,10 @@ function AdminDashboard({ user, toast }) {
               <div style={{fontFamily:"'Syne',sans-serif",fontWeight:700,fontSize:"1rem",marginBottom:"1rem",color:"var(--ink)"}}>📋 Program Objectives & Classes</div>
               <div className="grid-2" style={{marginBottom:"2rem"}}>
                 {[
-                  {obj:"Objective 1", label:"Digital Literacy",         icon:"💻", accent:"#00A86B", desc:"Computer basics, Word, Excel, Internet safety"},
-                  {obj:"Objective 2", label:"Web Development",          icon:"🌐", accent:"#1976D2", desc:"HTML, CSS, and publishing a real website"},
-                  {obj:"Objective 3", label:"Teacher Digital Tools",    icon:"👩‍🏫", accent:"#7B1FA2", desc:"PowerPoint, Google Classroom, lesson planning"},
-                  {obj:"Objective 4", label:"Digital Entrepreneurship", icon:"💰", accent:"#E65100", desc:"Freelancing, social media marketing, Fiverr"},
+                  {obj:"Objective 1", label:translateTrack("Digital Literacy", lang),         icon:"💻", accent:"#00A86B", desc:lang==="ig"?"Kọmputa, Word, Excel, na nchekwa internet":"Computer basics, Word, Excel, Internet safety"},
+                  {obj:"Objective 2", label:translateTrack("Web Development", lang),          icon:"🌐", accent:"#1976D2", desc:lang==="ig"?"HTML, CSS, na ibipụta ezigbo website":"HTML, CSS, and publishing a real website"},
+                  {obj:"Objective 3", label:translateTrack("Teacher Digital Tools", lang),    icon:"👩‍🏫", accent:"#7B1FA2", desc:lang==="ig"?"PowerPoint, Google Classroom, na lesson planning":"PowerPoint, Google Classroom, lesson planning"},
+                  {obj:"Objective 4", label:translateTrack("Digital Entrepreneurship", lang), icon:"💰", accent:"#E65100", desc:lang==="ig"?"Freelancing, social media marketing, na Fiverr":"Freelancing, social media marketing, Fiverr"},
                 ].map(track => {
                   const tCount = classes.filter(c=>c.objective===track.obj).length;
                   return (
@@ -2727,10 +2883,10 @@ function AdminDashboard({ user, toast }) {
                     <div key={c.id} style={{display:"flex",alignItems:"center",gap:".75rem",padding:".55rem 0",borderBottom:"1px solid #E8F2EB"}}>
                       <span style={{fontSize:"1.2rem"}}>{c.icon}</span>
                       <div style={{flex:1}}>
-                        <div style={{fontSize:".85rem",fontWeight:600,color:"var(--ink)"}}>{c.title}</div>
-                        <div style={{fontSize:".72rem",color:"var(--muted)"}}>{c.module} · {c.objectiveLabel||c.tag}</div>
+                        <div style={{fontSize:".85rem",fontWeight:600,color:"var(--ink)"}}><ClassName cls={c} lang={lang} compact={true}/></div>
+                        <div style={{fontSize:".72rem",color:"var(--muted)"}}>{c.module} · {translateTrack(c.objectiveLabel||c.tag, lang)}</div>
                       </div>
-                      <span className={`tag ${c.level==="Beginner"?"tag-green":c.level==="Intermediate"?"tag-gold":"tag-blue"}`} style={{fontSize:".68rem"}}>{c.level}</span>
+                      <span className={`tag ${c.level==="Beginner"?"tag-green":c.level==="Intermediate"?"tag-gold":"tag-blue"}`} style={{fontSize:".68rem"}}>{translateLevel(c.level, lang)}</span>
                     </div>
                   ))}
                 </div>
@@ -2760,11 +2916,11 @@ function AdminDashboard({ user, toast }) {
               {/* Objective track filters */}
               <div style={{display:"flex",gap:".5rem",flexWrap:"wrap",marginBottom:"1.25rem"}}>
                 {[
-                  {label:"All Tracks",    key:"all",  color:"var(--green)"},
-                  {label:"💻 Digital Literacy",         key:"Objective 1", color:"#00A86B"},
-                  {label:"🌐 Web Development",          key:"Objective 2", color:"#1976D2"},
-                  {label:"👩‍🏫 Teacher Tools",             key:"Objective 3", color:"#7B1FA2"},
-                  {label:"💰 Entrepreneurship",         key:"Objective 4", color:"#E65100"},
+                  {label:lang==="ig"?"Track Niile":"All Tracks",    key:"all",  color:"var(--green)"},
+                  {label:`💻 ${translateTrack("Digital Literacy", lang)}`,         key:"Objective 1", color:"#00A86B"},
+                  {label:`🌐 ${translateTrack("Web Development", lang)}`,          key:"Objective 2", color:"#1976D2"},
+                  {label:`👩‍🏫 ${translateTrack("Teacher Tools", lang)}`,             key:"Objective 3", color:"#7B1FA2"},
+                  {label:`💰 ${translateTrack("Entrepreneurship", lang)}`,         key:"Objective 4", color:"#E65100"},
                 ].map(f => (
                   <button key={f.key}
                     className={`btn btn-sm ${adminFilter===f.key?"btn-green":"btn-outline-green"}`}
@@ -2783,13 +2939,18 @@ function AdminDashboard({ user, toast }) {
                         const trackColor = c.objective==="Objective 1"?"#00A86B":c.objective==="Objective 2"?"#1976D2":c.objective==="Objective 3"?"#7B1FA2":"#E65100";
                         return (
                           <tr key={c.id}>
-                            <td><span style={{fontSize:"1.2rem",marginRight:".5rem"}}>{c.icon}</span><strong>{c.title}</strong></td>
+                            <td>
+                              <div style={{display:"flex",alignItems:"flex-start",gap:".5rem"}}>
+                                <span style={{fontSize:"1.2rem"}}>{c.icon}</span>
+                                <div style={{fontWeight:700}}><ClassName cls={c} lang={lang} compact={true}/></div>
+                              </div>
+                            </td>
                             <td><span style={{fontSize:".72rem",fontWeight:700,background:`${trackColor}15`,color:trackColor,padding:".25rem .6rem",borderRadius:"100px",whiteSpace:"nowrap"}}>{c.objective||"—"}</span></td>
                             <td style={{color:"var(--muted)",fontSize:".82rem"}}>{c.module}</td>
-                            <td><span className={`tag ${c.level==="Beginner"?"tag-green":c.level==="Intermediate"?"tag-gold":"tag-blue"}`}>{c.level}</span></td>
-                            <td>{c.duration}</td>
+                            <td><span className={`tag ${c.level==="Beginner"?"tag-green":c.level==="Intermediate"?"tag-gold":"tag-blue"}`}>{translateLevel(c.level, lang)}</span></td>
+                            <td>{translateDuration(c.duration, lang)}</td>
                             <td style={{display:"flex",gap:".5rem",flexWrap:"wrap"}}>
-                              <button className="btn btn-outline-green btn-sm" onClick={()=>setSelectedLesson(c)}>Preview</button>
+                              <button className="btn btn-outline-green btn-sm" onClick={()=>setSelectedLesson(classText(c,lang))}>Preview</button>
                               <button className="btn btn-sm" style={{background:"var(--surface)",color:"var(--ink)"}} onClick={()=>{setEditTarget(c);setShowAdd(true);}}>Edit</button>
                               <button className="btn btn-red btn-sm" onClick={()=>deleteClass(c.id)}>Delete</button>
                             </td>
@@ -2802,7 +2963,7 @@ function AdminDashboard({ user, toast }) {
             </div>
           )}
 
-          {active==="users" && <UsersPanel users={users} initials={initials}/>}
+          {active==="users" && <UsersPanel users={users} initials={initials} lang={lang}/>}
 
           {active==="upload" && (
             <div style={{maxWidth:"620px"}}>
@@ -2827,7 +2988,7 @@ function AdminDashboard({ user, toast }) {
           )}
           {active==="attendance"  && <AttendancePage  user={user} toast={toast} isAdmin={true}/>}
           {active==="announce"    && <AnnouncementsPage user={user} toast={toast}/>}
-          {active==="schedule"    && <SchedulePage isAdmin={true} classes={classes}/>}
+          {active==="schedule"    && <SchedulePage isAdmin={true} classes={classes} lang={lang}/>}
           {active==="leaderboard" && <LeaderboardPage classes={classes}/>}
           {active==="donations"   && <AdminDonationsPage toast={toast}/>}
           {active==="export"      && <ExportPanel classes={classes} toast={toast}/>}
@@ -2884,11 +3045,14 @@ const IHE_CAPTIONS = [
   "National Youth Service Corps — EN/25B/0815"
 ];
 
-function Landing({ onLogin, onSignup, onDonate }) {
+function Landing({ onLogin, onSignup, onDonate, lang: appLang="en", setLang: setAppLang }) {
   const [slide, setSlide] = useState(0);
   const [prev,  setPrev]  = useState(null);
   const [animating, setAnimating] = useState(false);
   const [textKey, setTextKey] = useState(0);
+  const lang = appLang;
+  const setLang = setAppLang || (()=>{});
+  const goTo = id => document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
 
   useEffect(()=>{
     const id = setInterval(()=>{
@@ -2905,6 +3069,52 @@ function Landing({ onLogin, onSignup, onDonate }) {
   },[]);
 
   const captions = IHE_CAPTIONS;
+  const copy = {
+    en: {
+      nav:["About","Objectives","Schedule","Schools","Support"],
+      lang:"IG",
+      login:"Log In",
+      signup:"Sign Up Free",
+      badge:"🇳🇬 NYSC CDS · Awgu LGA, Enugu State",
+      title:(<><span className="a">Smart</span> Youths &<br/>Teachers <span className="g">Digital</span><br/>Empowerment</>),
+      intro:(<>Complete all ICT modules and earn your personalised <strong style={{color:"var(--gold-light)"}}>Certificate of Attendance</strong> — with your name on it.</>),
+      join:"🚀 Join the Program",
+      enrolled:"Already enrolled? Log in",
+      donate:"💚 Support & Donate",
+      stats:[["12","ICT Classes"],["20+","Schools"],["🏅","Certificate"]],
+      admin:"Admin demo: admin@smartclass.ng / admin123",
+      sections:{
+        about:["About The Project","Digital skills for youths and teachers in Ihe.","SmartClass Ihe is a NYSC CDS digital empowerment program for students, teachers, and schools in Ihe, Awgu LGA. The portal supports registration, lessons, attendance, quizzes, certificates, donations, and admin tracking for the training program."],
+        objectives:["Objectives","Practical ICT learning, organized by clear goals."],
+        cards:[["Digital Literacy","Basic computer use, internet safety, email, and productivity confidence."],["Office Tools","Word, Excel, PowerPoint, and real school administration workflows."],["Web Skills","Introductory web skills and responsible technology use for learning."]],
+        schedule:["Schedule","June 22 to July 11, 2026.","The program runs for three weeks at Christ Vision Academy, Ihe, with class sessions, practical activities, attendance tracking, and a final certificate/graduation day."],
+        schools:["Schools","Built for local schools and educators.","Participating students and teachers can sign up with their school name, complete lessons, take quizzes, and appear in school-level progress records inside the admin dashboard."],
+        support:["Support","Help provide materials, devices, and refreshments.","Sponsors and supporters can use the donation page to pledge support. Admins can confirm or reject donations and export donation records from the dashboard."]
+      }
+    },
+    ig: {
+      nav:["Maka Ya","Ebumnobi","Oge Ihe","Ulo Akwukwo","Nkwado"],
+      lang:"EN",
+      login:"Banye",
+      signup:"Debanye Aha",
+      badge:"🇳🇬 NYSC CDS · Awgu LGA, Enugu State",
+      title:(<><span className="a">Smart</span> Umuokorobia &<br/>Ndi Nkuzi <span className="g">Digital</span><br/>Empowerment</>),
+      intro:(<>Mechaa modul ICT niile wee nweta <strong style={{color:"var(--gold-light)"}}>Certificate of Attendance</strong> nke nwere aha gi.</>),
+      join:"🚀 Soro Mmemme A",
+      enrolled:"I debanyela aha? Banye",
+      donate:"💚 Kwado & Nye Onyinye",
+      stats:[["12","Klas ICT"],["20+","Ulo Akwukwo"],["🏅","Asambodo"]],
+      admin:"Nnwale admin: admin@smartclass.ng / admin123",
+      sections:{
+        about:["Maka Mmemme A","Nkà digital maka umu akwukwo na ndi nkuzi na Ihe.","SmartClass Ihe bu mmemme NYSC CDS maka inye umu akwukwo, ndi nkuzi, na ulo akwukwo na Ihe, Awgu LGA nkà digital. Portal a na enyere aka na ndebanye aha, nkuzi, attendance, quiz, asambodo, onyinye, na nlekota admin."],
+        objectives:["Ebumnobi","Nkuzi ICT bara uru, haziri nke oma."],
+        cards:[["Nkà Digital","Iji kọmputa, nchekwa internet, email, na confidence n'ọrụ digital."],["Ngwa Office","Word, Excel, PowerPoint, na usoro oru ulo akwukwo."],["Nkà Web","Mbido web skills na iji technology mee ihe n'ụzọ kwesiri ekwesi." ]],
+        schedule:["Oge Ihe","June 22 ruo July 11, 2026.","Mmemme a ga-aga izu atọ na Christ Vision Academy, Ihe, tinyere klas, practical, attendance, na ụbọchị asambodo/graduation."],
+        schools:["Ulo Akwukwo","Emere ya maka ulo akwukwo na ndi nkuzi obodo.","Umu akwukwo na ndi nkuzi nwere ike idebanye aha na aha ulo akwukwo ha, mechaa nkuzi, mee quiz, ma pụta na progress records nke admin."],
+        support:["Nkwado","Nyere aka inye materials, devices, na refreshments.","Ndi nkwado nwere ike iji donation page nye nkwado. Admin nwere ike ikwenye ma obu jụ donation, ma weputa records ya."]
+      }
+    }
+  }[lang];
 
   return (
     <div className="landing" style={{background:"#0a1a0e"}}>
@@ -2980,10 +3190,18 @@ function Landing({ onLogin, onSignup, onDonate }) {
 
       {/* NAV */}
       <nav className="landing-nav" style={{position:"relative",zIndex:10}}>
-        <div className="logo"><div className="logo-dot"/>Smart<span>Class</span> Ihe</div>
+        <div className="logo"><span className="home-mark" aria-hidden="true">⌂</span><div className="logo-dot"/>Smart<span>Class</span> Ihe</div>
+        <div className="landing-links">
+          <button className="landing-link" onClick={()=>goTo("about")}>{copy.nav[0]}</button>
+          <button className="landing-link" onClick={()=>goTo("objectives")}>{copy.nav[1]}</button>
+          <button className="landing-link" onClick={()=>goTo("schedule")}>{copy.nav[2]}</button>
+          <button className="landing-link" onClick={()=>goTo("schools")}>{copy.nav[3]}</button>
+          <button className="landing-link" onClick={()=>goTo("support")}>{copy.nav[4]}</button>
+        </div>
         <div style={{display:"flex",gap:"1rem"}}>
-          <button className="btn btn-ghost btn-sm" onClick={onLogin}>Log In</button>
-          <button className="btn btn-green btn-sm" onClick={onSignup}>Sign Up Free</button>
+          <button className="lang-toggle" onClick={()=>setLang(lang==="en"?"ig":"en")}>{copy.lang}</button>
+          <button className="btn btn-ghost btn-sm" onClick={onLogin}>{copy.login}</button>
+          <button className="btn btn-green btn-sm" onClick={onSignup}>{copy.signup}</button>
         </div>
       </nav>
 
@@ -2996,7 +3214,7 @@ function Landing({ onLogin, onSignup, onDonate }) {
             border:"1px solid rgba(0,168,107,.5)",
             animation:"pulseRing 2s ease infinite",
           }}/>
-          <div className="hero-badge">🇳🇬 NYSC CDS · Awgu LGA, Enugu State</div>
+          <div className="hero-badge">{copy.badge}</div>
         </div>
 
         {/* Main headline — re-animates on slide change */}
@@ -3004,26 +3222,20 @@ function Landing({ onLogin, onSignup, onDonate }) {
           textShadow:"0 2px 20px rgba(0,0,0,.6)",
           animationDelay:"0.1s",
         }}>
-          <span className="a">Smart</span> Youths &<br/>
-          Teachers <span className="g">Digital</span><br/>
-          Empowerment
+          {copy.title}
         </h1>
 
-        <p key={`p${textKey}`} className="hero-p slide-text-enter" style={{animationDelay:"0.25s",textShadow:"0 1px 8px rgba(0,0,0,.5)"}}>
-          Complete all ICT modules and earn your personalised{" "}
-          <strong style={{color:"var(--gold-light)"}}>Certificate of Attendance</strong>
-          {" "}— with your name on it.
-        </p>
+        <p key={`p${textKey}`} className="hero-p slide-text-enter" style={{animationDelay:"0.25s",textShadow:"0 1px 8px rgba(0,0,0,.5)"}}>{copy.intro}</p>
 
         <div className="hero-btns slide-text-enter" style={{animationDelay:"0.4s"}}>
-          <button className="btn btn-green" onClick={onSignup}>🚀 Join the Program</button>
-          <button className="btn btn-ghost" onClick={onLogin}>Already enrolled? Log in</button>
-          <button className="btn btn-gold" onClick={onDonate}>💚 Support & Donate</button>
+          <button className="btn btn-green" onClick={onSignup}>{copy.join}</button>
+          <button className="btn btn-ghost" onClick={onLogin}>{copy.enrolled}</button>
+          <button className="btn btn-gold" onClick={onDonate}>{copy.donate}</button>
         </div>
 
         {/* Stats */}
         <div className="hero-stats" style={{marginTop:"1.5rem"}}>
-          {[["12","ICT Classes"],["20+","Schools"],["AI","Powered"],["🏅","Certificate"]].map(([n,l],i)=>(
+          {copy.stats.map(([n,l],i)=>(
             <div key={i} className="hstat hero-stat-ani" style={{animationDelay:`${i*.12}s`}}>
               <strong>{n}</strong>{l}
             </div>
@@ -3058,7 +3270,51 @@ function Landing({ onLogin, onSignup, onDonate }) {
 
         <div style={{marginTop:"1rem",color:"rgba(255,255,255,.25)",fontSize:".72rem",display:"flex",alignItems:"center",gap:".5rem"}}>
           <span style={{width:"7px",height:"7px",borderRadius:"50%",background:"var(--gold)",display:"inline-block"}}/>
-          Admin demo: admin@smartclass.ng / admin123
+          {copy.admin}
+        </div>
+      </div>
+
+      <div className="public-sections">
+        <div className="public-inner">
+          <section className="public-section" id="about">
+            <div className="public-kicker">{copy.sections.about[0]}</div>
+            <h2 className="public-title">{copy.sections.about[1]}</h2>
+            <p className="public-copy">{copy.sections.about[2]}</p>
+          </section>
+
+          <section className="public-section" id="objectives">
+            <div className="public-kicker">{copy.sections.objectives[0]}</div>
+            <h2 className="public-title">{copy.sections.objectives[1]}</h2>
+            <div className="info-grid">
+              {copy.sections.cards.map(([title,body])=>(
+                <div className="info-card" key={title}><strong>{title}</strong><span>{body}</span></div>
+              ))}
+            </div>
+          </section>
+
+          <section className="public-section" id="schedule">
+            <div className="public-kicker">{copy.sections.schedule[0]}</div>
+            <h2 className="public-title">{copy.sections.schedule[1]}</h2>
+            <p className="public-copy">{copy.sections.schedule[2]}</p>
+          </section>
+
+          <section className="public-section" id="schools">
+            <div className="public-kicker">{copy.sections.schools[0]}</div>
+            <h2 className="public-title">{copy.sections.schools[1]}</h2>
+            <p className="public-copy">{copy.sections.schools[2]}</p>
+          </section>
+
+          <section className="public-section" id="support">
+            <div className="public-kicker">{copy.sections.support[0]}</div>
+            <h2 className="public-title">{copy.sections.support[1]}</h2>
+            <p className="public-copy">{copy.sections.support[2]}</p>
+            <div style={{marginTop:"1.5rem",display:"flex",gap:"1rem",flexWrap:"wrap"}}>
+              <button className="btn btn-green" onClick={onDonate}>{copy.donate}</button>
+              <button className="btn btn-outline-green" onClick={onSignup}>{copy.join}</button>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   );
 }
@@ -3125,6 +3381,8 @@ function AuthPage({ mode, onSuccess, onSwitch }) {
         </button>
         <div className="auth-switch">
           {mode==="login"?<>Don't have an account? <a onClick={onSwitch}>Sign up free</a></>:<>Already have an account? <a onClick={onSwitch}>Sign in</a></>}
+        </div>
+      </div>
     </div>
   );
 }
@@ -3153,6 +3411,7 @@ function PublicDonatePage({ onBack }) {
 export default function App() {
   const [page, setPage] = useState("landing");
   const [user, setUser] = useState(null);
+  const [lang, setLang] = useState(()=>localStorage.getItem("sc_lang")||"en");
   const toast = useToast();
 
   useEffect(()=>{
@@ -3162,6 +3421,8 @@ export default function App() {
     if(!localStorage.getItem(SK_USERS))   saveUsers([SEED_ADMIN]);
   },[]);
 
+  useEffect(()=>{ localStorage.setItem("sc_lang",lang); },[lang]);
+
   const login  = u => { setUser(u); setPage("app"); toast.push(`Welcome, ${u.name.split(" ")[0]}! 👋`,"green"); };
   const logout = () => { clearSession(); setUser(null); setPage("landing"); toast.push("Logged out.","green"); };
 
@@ -3169,7 +3430,7 @@ export default function App() {
     <>
       <style>{css}</style>
       <Toast toasts={toast.toasts}/>
-      {page==="landing" && <Landing onLogin={()=>setPage("login")} onSignup={()=>setPage("signup")} onDonate={()=>setPage("donate")}/>}
+      {page==="landing" && <Landing lang={lang} setLang={setLang} onLogin={()=>setPage("login")} onSignup={()=>setPage("signup")} onDonate={()=>setPage("donate")}/>}
       {page==="donate"  && <PublicDonatePage onBack={()=>setPage("landing")}/>}
       {page==="login"   && <AuthPage mode="login"  onSuccess={login} onSwitch={()=>setPage("signup")}/>}
       {page==="signup"  && <AuthPage mode="signup" onSuccess={login} onSwitch={()=>setPage("login")}/>}
@@ -3178,7 +3439,7 @@ export default function App() {
           <button className="btn btn-sm" style={{position:"fixed",bottom:"1.5rem",left:"260px",zIndex:60,background:"rgba(229,57,53,.1)",color:"var(--red)",border:"1px solid rgba(229,57,53,.2)"}} onClick={logout}>
             🚪 Logout
           </button>
-          {user.role==="admin" ? <AdminDashboard user={user} toast={toast}/> : <StudentDashboard user={user}/>}
+          {user.role==="admin" ? <AdminDashboard user={user} toast={toast} lang={lang} setLang={setLang}/> : <StudentDashboard user={user} lang={lang} setLang={setLang}/>}
         </div>
       )}
     </>

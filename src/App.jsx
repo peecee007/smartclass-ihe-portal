@@ -35,6 +35,13 @@ const css = `
   .landing-link:hover{color:var(--gold)}
   .lang-toggle{display:inline-flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:.45rem .8rem;font-size:.78rem;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif}
   .lang-toggle:hover{background:rgba(255,255,255,.16)}
+  .lang-btn{padding:3px 8px;border-radius:12px;cursor:pointer;font-size:11px;font-weight:700;border:none;transition:all .2s}
+  .lang-btn.active{background:#10b981;color:#fff}
+  .lang-btn.inactive{background:transparent;color:rgba(255,255,255,.6)}
+  .bilingual-block{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+  .bilingual-en{background:#f0f9ff;border-left:3px solid #3b82f6;padding:12px;border-radius:6px}
+  .bilingual-ig{background:#f0fdf4;border-left:3px solid #10b981;padding:12px;border-radius:6px}
+  .lang-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;opacity:.7}
   .landing-hero{position:relative;z-index:5;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;text-align:center;gap:1.5rem}
   .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,168,107,.2);border:1px solid rgba(0,168,107,.4);color:var(--green-light);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1rem;border-radius:100px}
   .hero-h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.05;color:white}
@@ -308,6 +315,29 @@ const css = `
     .public-sections{padding:2.5rem 1rem 3.5rem}
     .public-section{padding:2rem 0}
     .info-grid{grid-template-columns:1fr}
+    .app-layout{display:block}
+    .sidebar{width:100%!important;height:auto;position:relative;transform:none;flex-direction:row;flex-wrap:wrap;padding:8px;overflow-x:auto;min-height:unset}
+    .sidebar-logo{width:100%;padding:8px 4px 4px;margin-bottom:4px}
+    .sidebar-user{width:100%;padding:8px 4px}
+    .sidebar-nav{display:flex;flex-direction:row;flex-wrap:wrap;gap:4px;width:100%;padding:4px}
+    .sidebar-nav .nav-item{padding:6px 10px!important;font-size:11px!important;border-radius:8px!important;white-space:nowrap;width:auto}
+    .sidebar-footer{width:100%;padding:4px}
+    .main-content{margin-left:0!important;width:100%}
+    .stat-grid,.grid-4{grid-template-columns:1fr 1fr!important}
+    .grid-2,.grid-3{grid-template-columns:1fr!important}
+    .hero-title,.hero-h1{font-size:1.8rem!important}
+    .hero-p{font-size:.95rem!important}
+    .hero-btns{flex-direction:column!important;gap:10px!important}
+    .bilingual-block{grid-template-columns:1fr!important}
+    .topbar{align-items:flex-start;gap:8px;flex-direction:column}
+    .topbar-right{flex-wrap:wrap}
+    .lesson-modal{width:95vw!important;max-width:95vw!important}
+    table{font-size:12px!important}
+    table th,table td{padding:6px 8px!important}
+  }
+  @media(max-width:480px){
+    .stat-grid,.grid-4{grid-template-columns:1fr!important}
+    .hero-title,.hero-h1{font-size:1.4rem!important}
   }
 `;
 
@@ -666,7 +696,9 @@ Give 4-5 numbered hands-on exercises participants do in the training room right 
 **✅ Assessment Question**
 One practical question or short task to confirm understanding.
 
-Keep language simple and encouraging. Make every exercise doable on a basic Windows PC. Relate examples to Nigeria where possible.`;
+Keep language simple and encouraging. Make every exercise doable on a basic Windows PC. Relate examples to Nigeria where possible.
+
+Where helpful, include short Igbo translations for key instructions using the labels "English:" and "Igbo:" so learners can follow in either language.`;
 
   try{
     const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:1200,
@@ -697,7 +729,7 @@ async function fetchQuiz(cls) {
   try{
     const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:1000,
       system:"Return ONLY a valid JSON array. No markdown, no backticks, no preamble.",
-      messages:[{role:"user",content:`Create 5 multiple-choice quiz questions for a Nigerian secondary school ICT class: "${cls.title}" (${cls.objectiveLabel||cls.tag}). Each question must test practical understanding. Return a JSON array of exactly 5 objects: [{"q":"question text","opts":["A. option","B. option","C. option","D. option"],"ans":0}] where ans is the 0-based index of the correct option. Make questions specific, clear, and relevant to Nigeria.`}]
+      messages:[{role:"user",content:`Create 5 bilingual multiple-choice quiz questions (English with Igbo translation) for a Nigerian secondary school ICT class: "${cls.title}" (${cls.objectiveLabel||cls.tag}). Each question must test practical understanding. Return a JSON array of exactly 5 objects: [{"q":"question text","opts":["A. option","B. option","C. option","D. option"],"ans":0}] where ans is the 0-based index of the correct option. Make questions specific, clear, and relevant to Nigeria.`}]
     });
     const quiz = parseClaudeJson(data.content?.[0]?.text,[]);
     return Array.isArray(quiz) ? quiz : [];
@@ -711,7 +743,7 @@ async function fetchQuiz(cls) {
 async function fetchQAAnswer(question, cls) {
   try{
     const data = await callClaude({ model:"claude-sonnet-4-20250514", max_tokens:400,
-      messages:[{role:"user",content:`A Nigerian secondary school student asked this question about the ICT class "${cls.title}": "${question}". Give a clear, simple, encouraging answer in 2-4 sentences. Be practical and Nigeria-relevant.`}]
+      messages:[{role:"user",content:`A Nigerian secondary school student asked this bilingual question about the ICT class "${cls.title}": "${question}". Give a clear, simple, encouraging answer in 2-4 sentences. Be practical and Nigeria-relevant. Format the response with two clearly labeled sections: English: and Igbo:. The Igbo section should translate the same answer into Igbo.`}]
     });
     return data.content?.[0]?.text || "I'm unable to answer right now. Please ask your trainer.";
   }catch(err){
@@ -722,6 +754,11 @@ async function fetchQAAnswer(question, cls) {
 
 // ── MARKDOWN ──────────────────────────────────────────────────────────
 function renderMD(text) {
+  text = String(text||"")
+    .replace(/🇬🇧 English:|English:/g, '<div class="lang-label" style="color:#3b82f6">English</div>')
+    .replace(/🟢 Igbo:|Igbo:/g, '<div class="lang-label" style="color:#10b981">Igbo (Asusu Igbo)</div>')
+    .replace(/🇬🇧(.+)/g, '<div style="background:#f0f9ff;border-left:3px solid #3b82f6;padding:8px 12px;margin:4px 0;border-radius:4px">$1</div>')
+    .replace(/🟢(.+)/g, '<div style="background:#f0fdf4;border-left:3px solid #10b981;padding:8px 12px;margin:4px 0;border-radius:4px">$1</div>');
   return text
     .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
     .replace(/^#{1,3} (.+)$/gm,"<h3>$1</h3>")
@@ -1535,10 +1572,10 @@ function DonationsPage({ user, toast }) {
   ];
 
   const METHODS = [
-    {id:"bank",    icon:"🏦", name:"Bank Transfer",    detail:"GTBank · 0123456789 · SmartClass Ihe SYTI"},
-    {id:"opay",    icon:"💚", name:"OPay",             detail:"Phone: 08012345678 · Name: Gabriel Benmoore"},
-    {id:"palmpay", icon:"🌴", name:"PalmPay",          detail:"Phone: 08012345678 · Name: Gabriel Benmoore"},
-    {id:"cash",    icon:"💵", name:"Cash at Training", detail:"Pay directly to coordinator at Christ Vision Academy"},
+    {id:"bank",    icon:"🏦", name:"Bank Transfer / Ntinye Ulo Akwukwo", detail:"First Bank of Nigeria · 3227711201 · Gabriel Pius Benmoore"},
+    {id:"palmpay", icon:"🌴", name:"PalmPay",          detail:"Phone: 09039504921 · Gabriel Pius Benmoore"},
+    {id:"cash",    icon:"💵", name:"Cash / Ego Aka",   detail:"See coordinator · Hu onye nduzi"},
+    {id:"cash-training", icon:"💵", name:"Cash at Training", detail:"Pay directly to coordinator at Christ Vision Academy"},
   ];
 
   const finalAmount = amount==="custom" ? custom : amount;
@@ -1706,7 +1743,7 @@ function DonationsPage({ user, toast }) {
             <input className="form-input" placeholder="08012345678" value={form.phone} onChange={e=>set("phone",e.target.value)}/>
           </div>
           <div className="form-group"><label className="form-label">Organization / School</label>
-            <input className="form-input" placeholder="e.g. GTBank, UNICEF, Personal" value={form.school} onChange={e=>set("school",e.target.value)}/>
+            <input className="form-input" placeholder="e.g. First Bank of Nigeria, UNICEF, Personal" value={form.school} onChange={e=>set("school",e.target.value)}/>
           </div>
         </div>
         <div className="form-group"><label className="form-label">Message (optional)</label>
@@ -2255,7 +2292,13 @@ function StudentDashboard({ user, lang="en", setLang=()=>{} }) {
   return (
     <div className="app-layout">
       <aside className="sidebar">
-        <div className="sidebar-logo"><div className="logo"><div className="logo-dot"/>Smart<span>Class</span></div></div>
+        <div className="sidebar-logo" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
+          <div className="logo"><div className="logo-dot"/>Smart<span>Class</span></div>
+          <div style={{display:"flex",gap:3}}>
+            <button className={"lang-btn "+(lang==="en"?"active":"inactive")} onClick={()=>setLang("en")}>EN</button>
+            <button className={"lang-btn "+(lang==="ig"?"active":"inactive")} onClick={()=>setLang("ig")}>IG</button>
+          </div>
+        </div>
         <div className="sidebar-user">
           <div className="user-avatar">{initials(user.name)}</div>
           <div>
